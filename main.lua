@@ -25,17 +25,62 @@ function createMatrixArray(rows, colums)
    
 end 
 
-function fillMatrix(matrix)  
+function spawnProbability()
+    randomValue = math.random(1, 40000) 
+
+    if (randomValue <= 5000) then
+        randomValue = 0
+    else 
+        randomValue = 1
+    end 
+    return randomValue
+end
+
+function fillMatrix(matrix, patternNumber)  
     for i = 1, rows do
         for j = 1, colums do
-            matrix[i][j] =  1
-           
+            --for week 9 deliverable
+            if(patternNumber>4) then
+                randomValue = spawnProbability()
+                matrix[i][j] = randomValue
+            else
+                matrix[i][j] =  1
+            end 
         end 
     end
     --for the week 7 deliverable to get 2(a) figure state for the cell
-    matrix [2][3] = 0
-    matrix [3][3] = 0
-    matrix [4][3] = 0
+    if (patternNumber == 1) then 
+        print("")
+        print("Figure 2.a")
+        matrix [2][3] = 0
+        matrix [3][3] = 0
+        matrix [4][3] = 0
+
+    --for the week 8 deliverable to get 2(b-d) figure state for the cell
+    elseif (patternNumber == 2) then
+        print("")
+        print("Figure 2.b")
+        matrix [2][2] = 0
+        matrix [2][3] = 0
+        matrix [3][2] = 0
+        matrix [3][3] = 0
+    elseif (patternNumber == 3) then
+        print("")
+        print("Figure 2.c")
+        matrix [2][2] = 0
+        matrix [3][3] = 0
+        matrix [4][4] = 0
+    elseif (patternNumber == 4) then
+        print("")
+        print("Figure 2.d")
+        matrix [1][1] = 0
+        matrix [2][2] = 0
+        matrix [2][3] = 0
+        matrix [3][1] = 0
+        matrix [3][2] = 0
+    end
+    
+
 end 
 
 function displayMatrix(matrix)
@@ -51,23 +96,7 @@ function displayMatrix(matrix)
         print("")
     end
 end 
---[[
-function changePattern(matrix)
-    if matrix[2][3] ==0 and matrix[4][3]==0 and matrix[4][3]==0 then 
-        for i = 1, rows do
-            for j = 1, colums do
-                matrix[i][j] =  1
-               
-            end 
-        end
-        --for the week 7 deliverable to get 2(a) figure state for the cell
-        matrix [3][2] = 0
-        matrix [3][3] = 0
-        matrix [3][4] = 0 
-    end
 
-end
---]]
 function detectNeighbourCells(currentCell, x, y)
     local neighbourCells = 0
     for i = -1, 1 do
@@ -185,12 +214,26 @@ function simulate(matrix)
 end
 
 function main()
-   local matrix = createMatrixArray(rows, colums)
-   ---[[
-    fillMatrix(matrix)
-    displayMatrix(matrix)
+    patternNumber = 5
+
+    if patternNumber > 4 then
+        rows = 200
+        colums = 200
+        matrix = createMatrixArray(rows, colums)
+    else
+        matrix = createMatrixArray(rows, colums)
+    end 
+  
+
+    for startNumber = 5, patternNumber do
+
+        fillMatrix(matrix, startNumber)
+        displayMatrix(matrix)
    
-    simulate(matrix)
+        simulate(matrix)
+        startNumber = startNumber+1
+    end
+
  
 end
 
