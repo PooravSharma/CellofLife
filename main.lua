@@ -1,13 +1,13 @@
 -----------------------------------------------------------------------------------------
 --
 -- main.lua
--- Week 7 deliverable
+-- Week 8 deliverable
 -----------------------------------------------------------------------------------------
 --Poorav Sharma 
 -- 0 and O are the cell
 -- 1 and # is the space
--- i tried using the cell rules but coudn't make detect the neighbours properly 
--- i just outputed the iteration 4 for figure 2(a)
+-- i tried using the cell rules but coudn't make detect the neighbours properly -fixed this problem for week 8 deliverables i ended up with two ways to fix it one is to duplicate the old matrix and the other is to create a new metrix and fill it with values
+-- i just outputed the iteration 4 for figure 2(b to d)
 local colums = 5
 local rows = 5 
 
@@ -39,6 +39,7 @@ function fillMatrix(matrix)
 end 
 
 function displayMatrix(matrix)
+    print("")
     for i = 1, rows do
         for j = 1, colums do
             if matrix[i][j] ==  0 then 
@@ -50,7 +51,7 @@ function displayMatrix(matrix)
         print("")
     end
 end 
-
+--[[
 function changePattern(matrix)
     if matrix[2][3] ==0 and matrix[4][3]==0 and matrix[4][3]==0 then 
         for i = 1, rows do
@@ -66,6 +67,7 @@ function changePattern(matrix)
     end
 
 end
+--]]
 function detectNeighbourCells(currentCell, x, y)
     local neighbourCells = 0
     for i = -1, 1 do
@@ -73,12 +75,13 @@ function detectNeighbourCells(currentCell, x, y)
             if (i == 0 and j == 0) then
 
             else
-            local row = ((x-1 + i + rows) % rows)+1
-            local colum = ((y-1 + j + colums) % colums)+1
+             local row = ((x-1 + i + rows ) % rows)+1
+             local colum = ((y-1 + j +colums) % colums)+1
             
              if currentCell[row][colum] == 0 then
                 neighbourCells = neighbourCells + 1
              end
+             
             end
         end 
        
@@ -87,15 +90,16 @@ function detectNeighbourCells(currentCell, x, y)
     return neighbourCells
 
 end 
----[[
-function nextState(currentCell)
-    local nextStateMatrix = currentCell
+
+--[[ creates a empty matrix where it fills the matrix for the next state the according to the rules 
+function nextState(currentMatrix)
+    local nextStateMatrix = createMatrixArray(rows, colums)
     for i = 1, rows do
         for j = 1, colums do
             x = i
             y= j
-            neighbourDetected = detectNeighbourCells(currentCell, x, y)
-            cellLocated = y
+            neighbourDetected = detectNeighbourCells(currentMatrix, x, y)
+            cellLocated = currentMatrix[i][j]
 
             if (cellLocated == 1) then
                 if neighbourDetected == 3 then 
@@ -113,26 +117,32 @@ function nextState(currentCell)
         end 
         
     end
+   
     displayMatrix(nextStateMatrix)
     return nextStateMatrix
 end
 --]]
---[[
-function nextState(currentCell)
-    local nextStateMatrix = currentCell
+
+
+---[[ duplicates the current matrix and changes the cells according to the rules 
+function nextState(currentMatrix)
+    local nextStateMatrix = duplicateArrayMatrix(currentMatrix)
     for i = 1, rows do
         for j = 1, colums do
-            x = i
-            y= j
-            neighbourDetected = detectNeighbourCells(currentCell, x, y)
-            cellLocated = y
-            if (cellLocated == 0) and (neighbourDetected <2 or neighbourDetected>3) then
+            neighbourDetected = detectNeighbourCells(currentMatrix, i, j)
+            cellLocated = currentMatrix[i][j]
+            if (cellLocated == 0) then
+                if(neighbourDetected <2 or neighbourDetected>3) then
                     nextStateMatrix[i][j] = 1
-            elseif (cellLocated == 1 and neighbourDetected == 3) then 
-                nextStateMatrix[i][j] = 0
-            else
-                nextStateMatrix[i][j] = 1
-            
+                else 
+                    --cell stays the same
+                end 
+            else 
+                if(cellLocated == 1 and neighbourDetected == 3) then 
+                    nextStateMatrix[i][j] = 0
+                else
+                   --cell stays the same
+                end
             end
         end 
         
@@ -143,11 +153,8 @@ function nextState(currentCell)
     displayMatrix(nextStateMatrix)
     return nextStateMatrix
 end
---]]
---[[
+
 function duplicateArrayMatrix(oldMatrix)
-    local copiedRows = rows
-    local copiedColoums = colums
     local copiedMatrix ={}
 
     for i = 1, rows do
@@ -160,39 +167,31 @@ function duplicateArrayMatrix(oldMatrix)
     return copiedMatrix
 end
 --]]
+
+
 function simulate(matrix)
 
     
-    local currentCell = matrix
-    iteration = 1;
-    while iteration <=4 do
-        print("")
-        currentCell = nextState(currentCell)
-        iteration = iteration +1
+    local currentMatrix = matrix
+    iterated =1;
+    iteration = 4;
+    while  iterated <=iteration do
+        currentMatrix = nextState(currentMatrix)
+        iterated = iterated +1
         
     end
 
 
 end
-function iterate(matrix)
-    for i =1, 2 do 
-        print("")
-        fillMatrix(matrix)
-        displayMatrix(matrix)
-        changePattern(matrix)
-        print("")
-        displayMatrix(matrix)
-    end
-end
+
 function main()
    local matrix = createMatrixArray(rows, colums)
-    --fillMatrix(matrix)
-   -- displayMatrix(matrix)
-    --changePattern(matrix)
-    --print("")
-  --  displayMatrix(matrix)
-    --simulate(matrix)
-    iterate(matrix)
+   ---[[
+    fillMatrix(matrix)
+    displayMatrix(matrix)
+   
+    simulate(matrix)
+ 
 end
 
 main()
