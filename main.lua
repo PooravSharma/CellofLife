@@ -214,7 +214,7 @@ function simulate(matrix)
 end
 
 function main()
-    patternNumber = 5
+    patternNumber = 4
 
     if patternNumber > 4 then
         rows = 200
@@ -225,7 +225,7 @@ function main()
     end 
   
 
-    for startNumber = 5, patternNumber do
+    for startNumber = 2, patternNumber do
 
         fillMatrix(matrix, startNumber)
         displayMatrix(matrix)
