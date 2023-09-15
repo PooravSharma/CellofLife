@@ -4,6 +4,7 @@
 -- Week 8 deliverable
 -----------------------------------------------------------------------------------------
 --Poorav Sharma 
+--Student ID: 10636908
 -- 0 and O are the cell
 -- 1 and # is the space
 -- i tried using the cell rules but coudn't make detect the neighbours properly -fixed this problem for week 8 deliverables i ended up with two ways to fix it one is to duplicate the old matrix and the other is to create a new metrix and fill it with values
