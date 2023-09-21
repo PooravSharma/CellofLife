@@ -4,14 +4,13 @@
 -- Week 8 deliverable
 -----------------------------------------------------------------------------------------
 --Poorav Sharma 
---Student ID: 10636908
 -- 0 and O are the cell
 -- 1 and # is the space
 -- i tried using the cell rules but coudn't make detect the neighbours properly -fixed this problem for week 8 deliverables i ended up with two ways to fix it one is to duplicate the old matrix and the other is to create a new metrix and fill it with values
 -- i just outputed the iteration 4 for figure 2(b to d)
 local colums = 5
-local rows = 5 
-
+local rows = 5
+local cellGroup = display.newGroup() 
 
 
 function createMatrixArray(rows, colums)
@@ -156,6 +155,7 @@ end
 
 ---[[ duplicates the current matrix and changes the cells according to the rules 
 function nextState(currentMatrix)
+   
     local nextStateMatrix = duplicateArrayMatrix(currentMatrix)
     for i = 1, rows do
         for j = 1, colums do
@@ -179,8 +179,8 @@ function nextState(currentMatrix)
     end
    
 
-    
-    displayMatrix(nextStateMatrix)
+    appDisplay(nextStateMatrix, rows, colums)
+   displayMatrix(nextStateMatrix)
     return nextStateMatrix
 end
 
@@ -214,28 +214,60 @@ function simulate(matrix)
 
 end
 
+function appDisplay(matrix, rows, coluums)
+   -- CELL_SIZE = 1.6
+   CELL_SIZE = 20
+    cellGroup:removeSelf()
+    cellGroup = display.newGroup() 
+    for i = 1, rows do
+        for j = 1, colums do
+            if matrix[i][j] == 0 then
+                local square = display.newRect((j - 1) * CELL_SIZE, (i - 1) * CELL_SIZE, CELL_SIZE, CELL_SIZE)
+                square:setFillColor(1, 1, 1) -- White color for live cells
+                cellGroup:insert(square)
+            end
+        end
+    end
+    
+  
+   
+end
+
+
 function main()
     patternNumber = 4
-
+    ---[[
     if patternNumber > 4 then
         rows = 200
         colums = 200
         matrix = createMatrixArray(rows, colums)
     else
         matrix = createMatrixArray(rows, colums)
+        ---[[
+       -- for startNumber = 4, patternNumber do
+
+            fillMatrix(matrix, 4)
+            displayMatrix(matrix)
+            appDisplay(matrix, rows, colums)
+            timer.performWithDelay(6000, simulate(matrix))
+            --startNumber = startNumber+1
+       -- end
+        --]]
     end 
-  
-
-    for startNumber = 2, patternNumber do
-
-        fillMatrix(matrix, startNumber)
-        displayMatrix(matrix)
-   
-        simulate(matrix)
-        startNumber = startNumber+1
-    end
-
- 
+    --]] 
+    --[[
+    fillMatrix(matrix, patternNumber)
+    --displayMatrix(matrix)
+    
+    appDisplay(matrix, 5, 5)
+    cellGroup:removeSelf()
+    print("start")
+    timer.performWithDelay(6000, nextState(matrix))
+    print("finish")
+   -- simulate(matrix)
+   --]]
 end
+
+----main----
 
 main()
