@@ -8,8 +8,17 @@
 -- 1 and # is the space
 -- i tried using the cell rules but coudn't make detect the neighbours properly -fixed this problem for week 8 deliverables i ended up with two ways to fix it one is to duplicate the old matrix and the other is to create a new metrix and fill it with values
 -- i just outputed the iteration 4 for figure 2(b to d)
-local colums = 5
-local rows = 5
+local display = require("display")
+display.setDefault("background", 1, 1, 1)
+local screenWidth = display.actualContentWidth
+local screenHeight = display.actualContentHeight
+ -- CELL_SIZE = 1.6
+local cell_Size = 10
+local colums = 200
+local rows = 200
+
+local cellWidth = (screenWidth - 2 * cell_Size) / colums
+local cellHeight = (screenHeight - 2 * cell_Size) / rows
 local cellGroup = display.newGroup() 
 
 
@@ -180,7 +189,7 @@ function nextState(currentMatrix)
    
 
     appDisplay(nextStateMatrix, rows, colums)
-   displayMatrix(nextStateMatrix)
+  --  displayMatrix(nextStateMatrix)
     return nextStateMatrix
 end
 
@@ -205,25 +214,32 @@ function simulate(matrix)
     local currentMatrix = matrix
     iterated =1;
     iteration = 4;
-    while  iterated <=iteration do
-        currentMatrix = nextState(currentMatrix)
-        iterated = iterated +1
-        
+    local delayBetweenIterations = 1000 --miliseconds
+    local function performNextIteration()
+       if  iterated <=iteration then
+            currentMatrix = nextState(currentMatrix)
+            iterated = iterated +1
+            timer.performWithDelay(delayBetweenIterations, performNextIteration)
+            print(iterated)
+        end
     end
-
-
+    performNextIteration()
 end
 
-function appDisplay(matrix, rows, coluums)
-   -- CELL_SIZE = 1.6
-   CELL_SIZE = 20
+function appDisplay(matrix, rows, colums)
+    --CELL_SIZE = 1.6
     cellGroup:removeSelf()
+    cellGroup = nil
     cellGroup = display.newGroup() 
     for i = 1, rows do
         for j = 1, colums do
             if matrix[i][j] == 0 then
-                local square = display.newRect((j - 1) * CELL_SIZE, (i - 1) * CELL_SIZE, CELL_SIZE, CELL_SIZE)
-                square:setFillColor(1, 1, 1) -- White color for live cells
+                local square = display.newRect((j - 1) * cellWidth, (i - 1) * cellHeight, cellWidth, cellHeight)
+                square:setFillColor(1, 0.75, 0.8) -- pink color for live cells
+                cellGroup:insert(square)
+            else
+                local square = display.newRect((j - 1) * cellWidth, (i - 1) * cellHeight, cellWidth, cellHeight)
+                square:setFillColor(0, 0, 0) -- black color for live cells
                 cellGroup:insert(square)
             end
         end
@@ -234,40 +250,25 @@ function appDisplay(matrix, rows, coluums)
 end
 
 
-function main()
-    patternNumber = 4
-    ---[[
-    if patternNumber > 4 then
-        rows = 200
-        colums = 200
-        matrix = createMatrixArray(rows, colums)
-    else
-        matrix = createMatrixArray(rows, colums)
-        ---[[
-       -- for startNumber = 4, patternNumber do
-
-            fillMatrix(matrix, 4)
-            displayMatrix(matrix)
-            appDisplay(matrix, rows, colums)
-            timer.performWithDelay(6000, simulate(matrix))
-            --startNumber = startNumber+1
-       -- end
-        --]]
-    end 
-    --]] 
-    --[[
-    fillMatrix(matrix, patternNumber)
-    --displayMatrix(matrix)
+function main()  
     
-    appDisplay(matrix, 5, 5)
-    cellGroup:removeSelf()
-    print("start")
-    timer.performWithDelay(6000, nextState(matrix))
-    print("finish")
-   -- simulate(matrix)
-   --]]
+        matrix = createMatrixArray(rows, colums)
+            fillMatrix(matrix, 5)
+           -- displayMatrix(matrix)
+            appDisplay(matrix, rows, colums)
+            timer.performWithDelay(1000, function()
+                simulate(matrix)
+            end)
+           -- simulate(matrix)
+            --startNumber = startNumber+1
+      
+   
 end
+
+
+
 
 ----main----
 
 main()
+
