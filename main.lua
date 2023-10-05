@@ -8,6 +8,19 @@
 -- 1 and # is the space
 -- i tried using the cell rules but coudn't make detect the neighbours properly -fixed this problem for week 8 deliverables i ended up with two ways to fix it one is to duplicate the old matrix and the other is to create a new metrix and fill it with values
 -- i just outputed the iteration 4 for figure 2(b to d)
+local composer = require("composer")
+composer.gotoScene("scenes.homescreen")
+
+
+
+
+
+
+
+
+-----------------------
+--[[
+
 local display = require("display")
 display.setDefault("background", 1, 1, 1)
 local screenWidth = display.actualContentWidth
@@ -129,7 +142,7 @@ function detectNeighbourCells(currentCell, x, y)
 
 end 
 
---[[ creates a empty matrix where it fills the matrix for the next state the according to the rules 
+creates a empty matrix where it fills the matrix for the next state the according to the rules 
 function nextState(currentMatrix)
     local nextStateMatrix = createMatrixArray(rows, colums)
     for i = 1, rows do
@@ -160,9 +173,9 @@ function nextState(currentMatrix)
     return nextStateMatrix
 end
 --]]
-
-
----[[ duplicates the current matrix and changes the cells according to the rules 
+--------------------------------------
+--[[
+duplicates the current matrix and changes the cells according to the rules 
 function nextState(currentMatrix)
    
     local nextStateMatrix = duplicateArrayMatrix(currentMatrix)
@@ -207,6 +220,7 @@ function duplicateArrayMatrix(oldMatrix)
 end
 --]]
 
+--[[
 
 function simulate(matrix)
 
@@ -214,7 +228,7 @@ function simulate(matrix)
     local currentMatrix = matrix
     iterated =1;
     iteration = 4;
-    local delayBetweenIterations = 1000 --miliseconds
+    local delayBetweenIterations = 1000 -- timer delay miliseconds
     local function performNextIteration()
        if  iterated <=iteration then
             currentMatrix = nextState(currentMatrix)
@@ -272,3 +286,4 @@ end
 
 main()
 
+--]]
