@@ -21,17 +21,17 @@ function scene:create( event )
     local sceneGroup = self.view
 
     local title = display.newText({
-        text = "Game of Life",  -- Replace with your title text
-        x = display.contentCenterX,  -- Center the text horizontally
-        y = 40,  -- Adjust the Y position as needed
-        fontSize = 50,  -- Set the font size
+        text = "Game of Life",  
+        x = display.contentCenterX,  -- To Center the text horizontally
+        y = 40,  
+        fontSize = 50,  -- To Set the font size
         font = native.systemFontBold,  -- Use a system font
     })
     local myDetail = display.newText({
-        text = "By Poorav Sharma \nStudent ID: 10636908",  -- Replace with your title text
-        x = display.contentCenterX,  -- Center the text horizontally
-        y = 100,  -- Adjust the Y position as needed
-        fontSize = 18,  -- Set the font size
+        text = "By Poorav Sharma \nStudent ID: 10636908",  
+        x = display.contentCenterX,  -- To Center the text horizontally
+        y = 100, 
+        fontSize = 18,  -- To Set the font size
         font = native.systemFontBold,  -- Use a system font
     })
 
@@ -54,11 +54,11 @@ function scene:create( event )
     local buttonBox = display.newRect(buttonGroup, 160, 525, 100, 50 )
     buttonBox:setFillColor(1, 1, 0)
     local buttonText = display.newText({
-        text = "Start",  -- Replace with your title text
-        x = 160,  -- Center the text horizontally
-        y = 525,  -- Adjust the Y position as needed
-        fontSize = 30,  -- Set the font size
-        font = native.systemFontBold,  -- Use a system font
+        text = "Start", 
+        x = 160,  -- To set text horizontally
+        y = 525, 
+        fontSize = 30,  -- To Set the font size
+        font = native.systemFontBold,  -- Useing a system font
     })
     buttonText:setFillColor(0, 0, 0) 
     buttonGroup:insert(buttonText)
