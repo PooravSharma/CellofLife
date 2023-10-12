@@ -27,13 +27,9 @@ local changingScene = false
 local start = false
 
 local iterationSpeed = 1
-local timerDelay
-local eventAdded = false;
-local finish = true
+
 local initialMatrix = {}
 local globalcurrentMatrix = {}
-
-
 
 
 
@@ -47,7 +43,8 @@ function createMatrixArray(rows, colums)
             globalcurrentMatrix[i][j] = ""
         end
     end
- 
+    
+   
 end 
 
 function spawnProbability()
@@ -238,7 +235,7 @@ end
 
 function simulate(matrix)
 
-  
+
     local currentMatrix = matrix
 
     local delayBetweenIterations -- timer delay miliseconds
@@ -262,8 +259,8 @@ function simulate(matrix)
             end
 
             currentMatrix = nextState(currentMatrix)
-            timerDelay = timer.performWithDelay(delayBetweenIterations, performNextIteration)
-       
+            timer.performWithDelay(delayBetweenIterations, performNextIteration)
+         
             duplicateArrayMatrixGlobal(currentMatrix)
         end
     end
@@ -437,14 +434,13 @@ function main()
    
 end
 
-
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
 -- -----------------------------------------------------------------------------------
 
 -- create()
 function scene:create( event )
-   
+
     -- Code here runs when the scene is first created but has not yet appeared on screen
 
     -- Assign "self.view" to local variable "sceneGroup" for easy reference
@@ -452,15 +448,12 @@ function scene:create( event )
     ---------------
     --create matrix
     ---------------
-
     createMatrixArray(rows, colums)
-
-    fillMatrix()
+    loadMatrix()
     duplicateArrayMatrixGlobal(initialMatrix)
     appDisplay(initialMatrix, rows, colums)
 
 
-   
 
 
     -------------------
@@ -561,7 +554,7 @@ function scene:create( event )
    -- Insert button into "sceneGroup"
   sceneGroup:insert( buttonNormal )
 
- scene.normalScene = buttonNormal
+  scene.normalScene = buttonNormal
 
     -------------------
     --fastest speed button = used to set he speed of the simulation 
@@ -659,7 +652,7 @@ function scene:create( event )
    -- Insert button into "sceneGroup"
   sceneGroup:insert( buttonPause )
 
- scene.pauseScene = buttonPause
+  scene.pauseScene = buttonPause
 
    -------------------
     --intitial state button = return to the begining state of the simulation -------- simulation needs to be paused 
@@ -708,7 +701,7 @@ function scene:create( event )
   buttonInitial.isVisible = false
   buttonPause.isVisible = false
   buttonSave.isVisible = false
-  eventAdded = true
+
 end
 
 
@@ -720,8 +713,6 @@ function scene:show( event )
 
     if ( phase == "will" ) then
         -- Code here runs when the scene is still off screen (but is about to come on screen)
-       
-        
 
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
@@ -737,7 +728,7 @@ function scene:show( event )
         display.remove(selectedspeedhalfbuttonBox)
         display.remove(selectedspeednormalbuttonBox)
         display.remove(selectedspeedslowestbuttonBox)
-        display.remove(instruction)
+
        composer.removeScene("scenes.game")
         composer.gotoScene("scenes.game", { effect = "slideRight", time = 500 })
     end)
@@ -815,7 +806,7 @@ function scene:show( event )
         whenPaused()
     
      end)
-     
+    
     end
 end
 
@@ -828,15 +819,22 @@ function scene:hide( event )
 
     if ( phase == "will" ) then
         -- Code here runs when the scene is on screen (but is about to go off screen)
-       -- globalcurrentMatrix = nil
-      --  initialMatrix = nil
       
-   
     elseif ( phase == "did" ) then
         -- Code here runs immediately after the scene goes entirely off screen
+        if cellGroup ~= nil then
+        display.remove(cellGroup)
+        cellGroup = nil
+        end 
+
+        display.remove(selectedspeedfastestbuttonBox)
+        display.remove(selectedspeedhalfbuttonBox)
+        display.remove(selectedspeednormalbuttonBox)
+        display.remove(selectedspeedslowestbuttonBox)
+
+        composer.removeScene("scenes.loadstate")
         
-        
-     
+
     end
 end
 
@@ -847,23 +845,17 @@ function scene:destroy( event )
     local sceneGroup = self.view
     -- Code here runs prior to the removal of scene's view
    
+
 end
 
 
 -- -----------------------------------------------------------------------------------
 -- Scene event function listeners
 -- -----------------------------------------------------------------------------------
---if finish == false then
- 
- --   end
-
 scene:addEventListener( "create", scene )
 scene:addEventListener( "show", scene )
 scene:addEventListener( "hide", scene )
 scene:addEventListener( "destroy", scene )
-
-
-
 -- -----------------------------------------------------------------------------------
 
 return scene

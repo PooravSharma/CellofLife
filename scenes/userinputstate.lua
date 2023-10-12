@@ -27,13 +27,9 @@ local changingScene = false
 local start = false
 
 local iterationSpeed = 1
-local timerDelay
-local eventAdded = false;
-local finish = true
+
 local initialMatrix = {}
 local globalcurrentMatrix = {}
-
-
 
 
 
@@ -47,7 +43,8 @@ function createMatrixArray(rows, colums)
             globalcurrentMatrix[i][j] = ""
         end
     end
- 
+    
+   
 end 
 
 function spawnProbability()
@@ -64,8 +61,7 @@ end
 function fillMatrix()  
     for i = 1, rows do
         for j = 1, colums do
-                randomValue = spawnProbability()
-                initialMatrix[i][j] = randomValue
+                initialMatrix[i][j] = 1
         end 
     end
 
@@ -262,8 +258,8 @@ function simulate(matrix)
             end
 
             currentMatrix = nextState(currentMatrix)
-            timerDelay = timer.performWithDelay(delayBetweenIterations, performNextIteration)
-       
+            timer.performWithDelay(delayBetweenIterations, performNextIteration)
+        
             duplicateArrayMatrixGlobal(currentMatrix)
         end
     end
@@ -318,7 +314,7 @@ function saveMatrix()
         local notisText = display.newText({
            text = "Current state Saved!", 
            x = 160,  -- To set text horizontally
-           y = 450, 
+           y = 475, 
            fontSize = 15,  -- To Set the font size
            font = native.systemFontBold,  -- Useing a system font
         })
@@ -328,7 +324,7 @@ function saveMatrix()
         local notisText = display.newText({
            text = "Error couldn't save state!!!", 
            x = 160,  -- To set text horizontally
-           y = 450, 
+           y = 475, 
            fontSize = 15,  -- To Set the font size
            font = native.systemFontBold,  -- Useing a system font
        })
@@ -377,6 +373,7 @@ function whenPaused()
 
 end
 
+---Shows what speed is chosen by the user
 function speedToggle()
     if iterationSpeed == 1 then
 
@@ -409,6 +406,39 @@ function speedToggle()
 
 end
 
+function drawingCell(gridRow, gridColoum)
+    if globalcurrentMatrix[gridRow][gridColoum] == 1 then
+        globalcurrentMatrix[gridRow][gridColoum] = 0
+        --globalcurrentMatrix[gridRow][gridColoum]:setFillColor(1, 0.75, 0.8)
+    else
+        globalcurrentMatrix[gridRow][gridColoum] = 1
+        --globalcurrentMatrix[gridRow][gridColoum]:setFillColor(1, 1, 1)
+
+    end
+    if changingScene == true then
+        return
+    end
+    appDisplay(globalcurrentMatrix, rows, colums)
+end 
+
+function drawingTouch(event)
+    local gridRow = math.floor(event.y / cellHeight)
+    local gridColoum = math.floor(event.x / cellWidth)
+     
+    if changingScene == true then
+        return
+    end
+    if event.phase == "began" or event.phase == "moved" then
+        if gridRow >= 1 and gridRow <= rows and gridColoum >= 1 and gridColoum <= colums then
+            drawingCell(gridRow, gridColoum)
+            if event.phase == "ended" or event.phase == "cancelled" then
+                return
+            end
+          
+        end
+    end 
+end 
+
 function main()  
     
         matrix = createMatrixArray(rows, colums)
@@ -437,30 +467,39 @@ function main()
    
 end
 
-
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
 -- -----------------------------------------------------------------------------------
 
 -- create()
 function scene:create( event )
-   
+
     -- Code here runs when the scene is first created but has not yet appeared on screen
 
     -- Assign "self.view" to local variable "sceneGroup" for easy reference
     local sceneGroup = self.view
+
+    changingScene = false
+
     ---------------
     --create matrix
     ---------------
-
     createMatrixArray(rows, colums)
-
     fillMatrix()
     duplicateArrayMatrixGlobal(initialMatrix)
     appDisplay(initialMatrix, rows, colums)
+    scene.gridDrawing = cellGroup
+    local instruction = display.newText({
+        text = "Tap to fill the grid!", 
+        x = 160,  -- To set text horizontally
+        y = 450, 
+        fontSize = 15,  -- To Set the font size
+        font = native.systemFontBold,  -- Useing a system font
+     })
+     instruction:setFillColor(1, 1, 1) 
+     sceneGroup:insert(instruction)
 
 
-   
 
 
     -------------------
@@ -561,7 +600,7 @@ function scene:create( event )
    -- Insert button into "sceneGroup"
   sceneGroup:insert( buttonNormal )
 
- scene.normalScene = buttonNormal
+  scene.normalScene = buttonNormal
 
     -------------------
     --fastest speed button = used to set he speed of the simulation 
@@ -659,7 +698,7 @@ function scene:create( event )
    -- Insert button into "sceneGroup"
   sceneGroup:insert( buttonPause )
 
- scene.pauseScene = buttonPause
+  scene.pauseScene = buttonPause
 
    -------------------
     --intitial state button = return to the begining state of the simulation -------- simulation needs to be paused 
@@ -668,7 +707,7 @@ function scene:create( event )
    local initialbuttonBox = display.newRect(buttonInitial, 260, 500, 80, 30 )
    initialbuttonBox:setFillColor(1, 1, 0)
    local initialbuttonText = display.newText({
-       text = "Initial State", 
+       text = "Clear Grid", 
        x = 260,  -- To set text horizontally
        y = 500, 
        fontSize = 15,  -- To Set the font size
@@ -707,8 +746,8 @@ function scene:create( event )
     
   buttonInitial.isVisible = false
   buttonPause.isVisible = false
-  buttonSave.isVisible = false
-  eventAdded = true
+  buttonSave.isVisible = true
+
 end
 
 
@@ -720,12 +759,12 @@ function scene:show( event )
 
     if ( phase == "will" ) then
         -- Code here runs when the scene is still off screen (but is about to come on screen)
-       
-        
-
+      
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
-       -- main()
+ 
+        Runtime:addEventListener("touch", drawingTouch)
+
      -------------------
     --back button = used to return to game screen 
     --------------------
@@ -738,7 +777,7 @@ function scene:show( event )
         display.remove(selectedspeednormalbuttonBox)
         display.remove(selectedspeedslowestbuttonBox)
         display.remove(instruction)
-       composer.removeScene("scenes.game")
+        composer.removeScene("scenes.game")
         composer.gotoScene("scenes.game", { effect = "slideRight", time = 500 })
     end)
 
@@ -815,8 +854,9 @@ function scene:show( event )
         whenPaused()
     
      end)
-     
+    
     end
+    
 end
 
 
@@ -828,15 +868,23 @@ function scene:hide( event )
 
     if ( phase == "will" ) then
         -- Code here runs when the scene is on screen (but is about to go off screen)
-       -- globalcurrentMatrix = nil
-      --  initialMatrix = nil
-      
-   
+    
+       
     elseif ( phase == "did" ) then
         -- Code here runs immediately after the scene goes entirely off screen
+        if cellGroup ~= nil then
+        display.remove(cellGroup)
+        cellGroup = nil
+        end 
+        display.remove(instruction)
+        display.remove(selectedspeedfastestbuttonBox)
+        display.remove(selectedspeedhalfbuttonBox)
+        display.remove(selectedspeednormalbuttonBox)
+        display.remove(selectedspeedslowestbuttonBox)
+       Runtime:removeEventListener("touch", drawingTouch)
+    
         
-        
-     
+
     end
 end
 
@@ -853,17 +901,10 @@ end
 -- -----------------------------------------------------------------------------------
 -- Scene event function listeners
 -- -----------------------------------------------------------------------------------
---if finish == false then
- 
- --   end
-
 scene:addEventListener( "create", scene )
 scene:addEventListener( "show", scene )
 scene:addEventListener( "hide", scene )
 scene:addEventListener( "destroy", scene )
-
-
-
 -- -----------------------------------------------------------------------------------
 
 return scene

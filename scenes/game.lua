@@ -16,10 +16,21 @@ local scene = composer.newScene()
 function scene:create( event )
 
     -- Code here runs when the scene is first created but has not yet appeared on screen
-
+    composer.removeScene("scenes.userinputstate")
+    composer.removeScene("scenes.randomstate")
+    composer.removeScene("scenes.loadstate")
+    display.remove(gameTitle)
+    gameTitle = nil
     -- Assign "self.view" to local variable "sceneGroup" for easy reference
     local sceneGroup = self.view
-
+    gameTitle = display.newText({
+        text = "Game of Life",  
+        x = display.contentCenterX,  -- To Center the text horizontally
+        y = -40,  
+        fontSize = 50,  -- To Set the font size
+        font = native.systemFontBold,  -- Use a system font
+    })
+    gameTitle:setFillColor(0, 1, 0) 
     local title = display.newText({
         text = "Choose how you want to \nstart the Game!!!",  
         x = display.contentCenterX,  -- To Center the text horizontally
@@ -27,7 +38,7 @@ function scene:create( event )
         fontSize = 25,  -- To Set the font size
         font = native.systemFontBold,  -- Use a system font
     })
-    title:setFillColor(0, 1, 0) 
+    title:setFillColor(1, 1, 1) 
 
     ---Making buttom for the random seed start state
     local buttonRandom = display.newGroup()
@@ -54,7 +65,7 @@ function scene:create( event )
     userinputbuttonBox:setFillColor(0/255, 200/255, 0/255)
     userinputbuttonBoxborder:setFillColor(1, 1, 1)
     local userinputbuttonText = display.newText({
-        text = "Personally seed Start State", 
+        text = "Personally Input Start State", 
         x = 160,  -- To set text horizontally
         y = 260, 
         fontSize = 18,  -- To Set the font size
@@ -71,7 +82,7 @@ function scene:create( event )
     loadbuttonBox:setFillColor(255/255, 165/255, 0/255)
     loadbuttonBoxborder:setFillColor(1, 1, 1)
     local loadbuttonText = display.newText({
-        text = "Load saved seed as Start State", 
+        text = "Load Saved State", 
         x = 160,  -- To set text horizontally
         y = 360, 
         fontSize = 18,  -- To Set the font size
@@ -80,12 +91,31 @@ function scene:create( event )
     loadbuttonText:setFillColor(0, 0, 0) 
     buttonLoad:insert(loadbuttonText)
 
+    local buttonBackGroup = display.newGroup()
+    local buttonBack = display.newRect(buttonBackGroup, 160, 525, 100, 50 )
+    buttonBack:setFillColor(1, 1, 0)
+    local backbuttonText = display.newText({
+        text = "Back", 
+        x = 160,  -- To set text horizontally
+        y = 525, 
+        fontSize = 30,  -- To Set the font size
+        font = native.systemFontBold,  -- Useing a system font
+    })
+    backbuttonText:setFillColor(0, 0, 0) 
+    buttonBackGroup:insert(backbuttonText)
+
     -- Insert Buttons into "sceneGroup"
     sceneGroup:insert( buttonRandom )
     sceneGroup:insert( buttonuserInput )
     sceneGroup:insert( buttonLoad )
     sceneGroup:insert(title)
+    sceneGroup:insert(buttonBackGroup)
+    --sceneGroup:insert(gameTitle)
+
+    scene.backState = buttonBackGroup
     scene.randomState = buttonRandom
+    scene.loadState = buttonLoad
+    scene.userinputState = buttonuserInput
 end
 
 
@@ -101,8 +131,26 @@ function scene:show( event )
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
         scene.randomState:addEventListener("tap", function()
-            composer.gotoScene("scenes.randomstate")
+            composer.removeScene("scenes.randomstate")
+            composer.gotoScene("scenes.randomstate", { effect = "slideLeft", time = 500 })
         end)
+        scene.loadState:addEventListener("tap", function()
+            composer.removeScene("scenes.loadstate")
+            composer.gotoScene("scenes.loadstate", { effect = "slideLeft", time = 500 })
+        end)
+        scene.userinputState:addEventListener("tap", function()
+            composer.removeScene("scenes.userinputstate")
+            composer.gotoScene("scenes.userinputstate", { effect = "slideLeft", time = 500 })
+        end)
+
+        scene.backState:addEventListener("tap", function()
+            display.remove(gameTitle)
+            gameTitle = nil
+            composer.removeScene("scenes.game")
+            composer.gotoScene("scenes.homescreen", { effect = "fade", time = 500 })
+         
+        end)
+
 
     end
 end
@@ -116,6 +164,7 @@ function scene:hide( event )
 
     if ( phase == "will" ) then
         -- Code here runs when the scene is on screen (but is about to go off screen)
+       
 
     elseif ( phase == "did" ) then
         -- Code here runs immediately after the scene goes entirely off screen

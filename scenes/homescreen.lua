@@ -54,7 +54,7 @@ function scene:create( event )
     local buttonBox = display.newRect(buttonGroup, 160, 525, 100, 50 )
     buttonBox:setFillColor(1, 1, 0)
     local buttonText = display.newText({
-        text = "Start", 
+        text = "Enter", 
         x = 160,  -- To set text horizontally
         y = 525, 
         fontSize = 30,  -- To Set the font size
@@ -87,7 +87,9 @@ function scene:show( event )
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
         scene.btn:addEventListener("tap", function()
-            composer.gotoScene("scenes.game")
+            composer.removeScene("scenes.homescreen")
+            composer.gotoScene("scenes.game", { effect = "fade", time = 500 })
+         
         end)
 
     end

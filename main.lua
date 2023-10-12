@@ -9,6 +9,7 @@
 -- i tried using the cell rules but coudn't make detect the neighbours properly -fixed this problem for week 8 deliverables i ended up with two ways to fix it one is to duplicate the old matrix and the other is to create a new metrix and fill it with values
 -- i just outputed the iteration 4 for figure 2(b to d)
 local composer = require("composer")
+composer.recycleOnSceneChange = false
 composer.gotoScene("scenes.homescreen")
 
 
